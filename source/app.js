@@ -6,6 +6,8 @@ const serve = require('koa-static');
 const router = require('koa-router')();
 const bodyParser = require('koa-bodyparser')();
 
+const logger = require('../libs/logger')('wallet-app');
+
 const {renderToStaticMarkup} = require('react-dom/server');
 
 const getCardsController = require('./controllers/cards/get-cards');
@@ -16,9 +18,9 @@ const createTransactionsController = require('./controllers/transactions/create'
 
 const errorController = require('./controllers/error');
 
-const ApplicationError = require('libs/application-error');
-const CardsModel = require('source/models/cards');
-const TransactionsModel = require('source/models/transactions');
+const ApplicationError = require('../libs/application-error');
+const CardsModel = require('./models/cards');
+const TransactionsModel = require('./models/transactions');
 
 const app = new Koa();
 
@@ -59,6 +61,7 @@ app.use(async (ctx, next) => {
 	await next();
 	const ms = new Date() - start;
 	console.log(`${ctx.method} ${ctx.url} - ${ms}ms`);
+	logger.log('info', `${ctx.method} ${ctx.url} - ${ms}ms`)
 });
 
 // error handler
